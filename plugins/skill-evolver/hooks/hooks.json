@@ -1,6 +1,18 @@
 {
   "description": "Skill Evolver — analytics hooks for skill usage tracking",
   "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/ensure-deps.mjs",
+            "timeout": 60
+          }
+        ]
+      }
+    ],
     "UserPromptSubmit": [
       {
         "hooks": [
