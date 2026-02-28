@@ -1,0 +1,11 @@
+{
+  "name": "skill-evolver",
+  "version": "0.1.0",
+  "description": "Analytics and health monitoring for Claude Code skills — track usage, detect reactions, health alerts, version history, A/B testing",
+  "author": {
+    "name": "dang1"
+  },
+  "keywords": ["analytics", "skills", "monitoring", "health", "a/b-testing"],
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks.json"
+}

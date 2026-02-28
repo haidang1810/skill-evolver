@@ -1,0 +1,11 @@
+{
+  "name": "skill-evolver",
+  "version": "0.1.0",
+  "description": "Analytics and health monitoring for Claude Code skills",
+  "type": "module",
+  "license": "MIT",
+  "keywords": ["claude-code-plugin", "analytics", "skills", "monitoring"],
+  "dependencies": {
+    "better-sqlite3": "^11.0.0"
+  }
+}
