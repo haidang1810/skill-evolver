@@ -7,13 +7,13 @@ Like Google Analytics for your skills — tracks usage, detects user reactions, 
 ## Install
 
 ```bash
-# Clone and install
-git clone <repo-url> skill-evolver
-cd skill-evolver
-npm install
-
-# Register as Claude Code plugin
-claude plugin add ./
+# install
+claude plugin marketplace add https://github.com/haidang1810/skill-evolver
+claude plugin install skill-evolver
+# update
+claude plugin marketplace update skill-evolver
+claude plugin uninstall skill-evolver
+claude plugin install skill-evolver
 ```
 
 ## Features
