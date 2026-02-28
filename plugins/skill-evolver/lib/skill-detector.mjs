@@ -3,12 +3,13 @@ import { readdirSync, existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { hashContent } from './hash.mjs';
 
-// Regex: prompt starts with /skill-name, optionally followed by args
-const EXPLICIT_CMD_RE = /^\/([\w-]+)(?:\s+(.*))?$/s;
+// Regex: prompt starts with /[namespace:]skill-name, optionally followed by args
+// Handles: /cook, /ck:code-review, /skill-evolver:skill-stats
+const EXPLICIT_CMD_RE = /^\/(?:([\w-]+):)?([\w-]+)(?:\s+(.*))?$/s;
 
 /**
  * Detect if user prompt invokes a skill explicitly via /command.
- * Returns { skillName, args, triggerType } or null if no skill detected.
+ * Returns { skillName, namespace, args, triggerType } or null if no skill detected.
  */
 export function detectSkillFromPrompt(prompt) {
   if (!prompt || typeof prompt !== 'string') return null;
@@ -17,10 +18,11 @@ export function detectSkillFromPrompt(prompt) {
   const match = trimmed.match(EXPLICIT_CMD_RE);
   if (!match) return null;
 
-  const skillName = match[1];
-  const args = match[2]?.trim() || '';
+  const namespace = match[1] || null;
+  const skillName = match[2];
+  const args = match[3]?.trim() || '';
 
-  return { skillName, args, triggerType: 'explicit' };
+  return { skillName, namespace, args, triggerType: 'explicit' };
 }
 
 /**
