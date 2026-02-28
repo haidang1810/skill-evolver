@@ -7,22 +7,8 @@
 //    + Handle A/B test version assignment
 
 import { getDb, closeDb } from '../lib/db.mjs';
-import { detectSkillFromPrompt, discoverSkills, getSkillFileInfo } from '../lib/skill-detector.mjs';
+import { detectSkillFromPrompt, discoverSkills, getSkillFileInfo, discoverOwnSkills } from '../lib/skill-detector.mjs';
 import { classifyReaction } from '../lib/reaction-patterns.mjs';
-import { appendFileSync, mkdirSync } from 'node:fs';
-import { join, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const PLUGIN_ROOT = process.env.CLAUDE_PLUGIN_ROOT || join(__dirname, '..');
-
-function debugLog(msg) {
-  try {
-    const logDir = join(PLUGIN_ROOT, 'data');
-    mkdirSync(logDir, { recursive: true });
-    appendFileSync(join(logDir, 'debug.log'), `[${new Date().toISOString()}] ${msg}\n`);
-  } catch { /* ignore */ }
-}
 
 async function main() {
   let input = '';
@@ -33,12 +19,6 @@ async function main() {
 
   const sessionId = data.session_id || data.sessionId || 'unknown';
   const prompt = data.prompt || data.message || '';
-
-  // Debug: log raw hook input
-  debugLog(`KEYS: ${Object.keys(data).join(', ')}`);
-  debugLog(`PROMPT (first 300): ${String(prompt).slice(0, 300)}`);
-  debugLog(`DETECTED: ${JSON.stringify(detectSkillFromPrompt(prompt))}`);
-
   if (!prompt) process.exit(0);
 
   const db = getDb();
@@ -99,7 +79,11 @@ function trackNewInvocation(db, sessionId, prompt) {
   const detected = detectSkillFromPrompt(prompt);
   if (!detected) return;
 
-  const { skillName, args, triggerType } = detected;
+  const { skillName, namespace, args, triggerType } = detected;
+
+  // Skip tracking plugin's own skills (e.g., /skill-evolver:skill-stats, /skill-stats)
+  const ownSkills = discoverOwnSkills();
+  if (namespace === 'skill-evolver' || ownSkills.has(skillName)) return;
 
   const skills = discoverSkills();
   const skillDir = skills.get(skillName);

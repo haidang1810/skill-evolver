@@ -1,7 +1,11 @@
 // Detect skill invocation from user prompt text
 import { readdirSync, existsSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { hashContent } from './hash.mjs';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const PLUGIN_ROOT = process.env.CLAUDE_PLUGIN_ROOT || join(__dirname, '..');
 
 // Regex: prompt starts with /[namespace:]skill-name, optionally followed by args
 // Handles: /cook, /ck:code-review, /skill-evolver:skill-stats
@@ -56,6 +60,22 @@ export function discoverSkills() {
   }
 
   return skills;
+}
+
+/**
+ * Get Set of this plugin's own skill names (to exclude from tracking).
+ * Scans ${CLAUDE_PLUGIN_ROOT}/skills/ for subdirectories.
+ */
+export function discoverOwnSkills() {
+  const ownSkills = new Set();
+  const skillsDir = join(PLUGIN_ROOT, 'skills');
+  if (!existsSync(skillsDir)) return ownSkills;
+  try {
+    for (const entry of readdirSync(skillsDir, { withFileTypes: true })) {
+      if (entry.isDirectory()) ownSkills.add(entry.name);
+    }
+  } catch { /* ignore */ }
+  return ownSkills;
 }
 
 /**
