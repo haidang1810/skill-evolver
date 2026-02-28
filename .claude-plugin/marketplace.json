@@ -1,0 +1,12 @@
+{
+  "name": "skill-evolver",
+  "owner": {
+    "name": "dang1"
+  },
+  "plugins": [
+    {
+      "name": "skill-evolver",
+      "source": "."
+    }
+  ]
+}
