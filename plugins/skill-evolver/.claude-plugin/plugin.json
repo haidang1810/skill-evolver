@@ -6,6 +6,5 @@
     "name": "dang1"
   },
   "keywords": ["analytics", "skills", "monitoring", "health", "a/b-testing"],
-  "skills": "./skills/",
-  "hooks": "./hooks/hooks.json"
+  "skills": "./skills/"
 }
